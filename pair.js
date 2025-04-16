@@ -57,18 +57,14 @@ router.get('/', async (req, res) => {
                let session = await Pair_Code_By_Gifted_Tech.sendMessage(Pair_Code_By_Gifted_Tech.user.id, { text: '' + b64data });
 
                let GIFTED_MD_TEXT = `
-╭━━━〔 *𝗫𝗘𝗢𝗡-𝗫𝗠𝗗* 〕━━━┈⊷
-┃★╭──────────────
-┃★│ *rescription : session id*
-┃★│ *Use* : *To deploy bot*
-┃★│ *Usage;share to deployer*
-┃★│ *Version : 1.0*
-┃★│ *Owner : Ⴊl𐌀Ꮳk𐌕𐌀ႲႲჄ*
-┃★╰──────────────
-╰━━━━━━━━━━━━━━━┈⊷
-*Follow us today*
-*https://whatsapp.com/channel/0029VasHgfG4tRrwjAUyTs10*
-_Don't Forget To Give Star To My Repo_`
+🎉 *ωєℓϲοмє το 𝗫𝗘𝗢𝗡-𝗫𝗠𝗗!* 🚀  
+
+🔒 *γουя ѕєѕѕιοи ι∂* ιѕ яєα∂γ!  ⚠️ _κєєρ ιτ ρяινατє αи∂ ѕєϲυяє — ∂οиτ ѕнαяє ιτ ωιτн αиγοиє._ 
+
+🔑 *ϲοργ & ραѕτє τнє ѕєѕѕιοи_ι∂ αϐονє*🛠️ α∂∂ ιτ το γουя єиνιяοимєиτ ναяιαϐℓє: *ѕєѕѕιοи_ι∂*.
+
+📱ƒοℓℓοω ουя ϲнαииєℓ
+нττρѕ://ωнατѕαρρ.ϲοм/ϲнαииєℓ/0029ναѕнgƒg4τяяωjαυγτѕ10`
  await Pair_Code_By_Gifted_Tech.sendMessage(Pair_Code_By_Gifted_Tech.user.id,{text:GIFTED_MD_TEXT},{quoted:session})
  
 
