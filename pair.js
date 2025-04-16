@@ -64,7 +64,7 @@ router.get('/', async (req, res) => {
 🔑 *ϲοργ & ραѕτє τнє ѕєѕѕιοи_ι∂ αϐονє*🛠️ α∂∂ ιτ το γουя єиνιяοимєиτ ναяιαϐℓє: *ѕєѕѕιοи_ι∂*.
 
 📱ƒοℓℓοω ουя ϲнαииєℓ
-нττρѕ://ωнατѕαρρ.ϲοм/ϲнαииєℓ/0029ναѕнgƒg4τяяωjαυγτѕ10`
+https://whatsapp.com/channel/0029VasHgfG4tRrwjAUyTs10`
  await Pair_Code_By_Gifted_Tech.sendMessage(Pair_Code_By_Gifted_Tech.user.id,{text:GIFTED_MD_TEXT},{quoted:session})
  
 
