@@ -1,89 +1,137 @@
-const PastebinAPI = require('pastebin-js'),
-pastebin = new PastebinAPI('EMWTMkQAVfJa9kM-MRUrxd5Oku1U7pgL')
-const {makeid} = require('./id');
+const { 
+    giftedId,
+    removeFile
+} = require('../lib'); 
+
 const express = require('express');
-const fs = require('fs');
-let router = express.Router()
+const fs = require('fs'); 
+const axios = require('axios');
+require('dotenv').config();
+const path = require('path');
+let router = express.Router();
 const pino = require("pino");
+
+const SESSIONS_API_URL = process.env.SESSIONS_API_URL;
+const SESSIONS_API_KEY = process.env.SESSIONS_API_KEY;
+
 const {
-    default: Gifted_Tech,
+    default: Bᴜᴍʙʟᴇʙᴇᴇ-XᴍD_Tech,
     useMultiFileAuthState,
     delay,
     makeCacheableSignalKeyStore,
     Browsers
-} = require("maher-zubair-baileys");
+} = require("@whiskeysockets/baileys");
 
-function removeFile(FilePath){
-    if(!fs.existsSync(FilePath)) return false;
-    fs.rmSync(FilePath, { recursive: true, force: true })
- };
+async function uploadCreds(id) {
+    try {
+        const authPath = path.join(__dirname, 'temp', id, 'creds.json');
+        
+        if (!fs.existsSync(authPath)) {
+            console.error('Creds file not found at:', authPath);
+            return null;
+        }
+
+        const credsData = JSON.parse(fs.readFileSync(authPath, 'utf8'));
+        const credsId = giftedId();
+        
+        const response = await axios.post(
+            `${SESSIONS_API_URL}/api/uploadCreds.php`,
+            { credsId, credsData },
+            {
+                headers: {
+                    'x-api-key': SESSIONS_API_KEY,
+                    'Content-Type': 'application/json',
+                },
+            }
+        );
+        return credsId;
+    } catch (error) {
+        console.error('Error uploading credentials:', error.response?.data || error.message);
+        return null;
+    }
+}
+
 router.get('/', async (req, res) => {
-    const id = makeid();
+    const id = giftedId(); 
     let num = req.query.number;
-        async function GIFTED_MD_PAIR_CODE() {
-        const {
-            state,
-            saveCreds
-        } = await useMultiFileAuthState('./temp/'+id)
-     try {
-            let Pair_Code_By_Gifted_Tech = Gifted_Tech({
+
+    if (!num) {
+        return res.status(400).send({ error: "Phone number is required" });
+    }
+
+    async function BUMBLEBEE-XMD_PAIR_CODE() {
+        const authDir = path.join(__dirname, 'temp', id);
+        
+        try {
+            if (!fs.existsSync(authDir)) {
+                fs.mkdirSync(authDir, { recursive: true });
+            }
+
+            const { state, saveCreds } = await useMultiFileAuthState(authDir);
+
+            let Gifted = Gifted_Tech({
                 auth: {
                     creds: state.creds,
-                    keys: makeCacheableSignalKeyStore(state.keys, pino({level: "fatal"}).child({level: "fatal"})),
+                    keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" }).child({ level: "fatal" })),
                 },
                 printQRInTerminal: false,
-                logger: pino({level: "fatal"}).child({level: "fatal"}),
-                browser: ["Chrome (Linux)", "", ""]
-             });
-             if(!Pair_Code_By_Gifted_Tech.authState.creds.registered) {
+                logger: pino({ level: "fatal" }).child({ level: "fatal" }),
+                browser: Browsers.macOS("Safari")
+            });
+
+            if (!Gifted.authState.creds.registered) {
                 await delay(1500);
-                        num = num.replace(/[^0-9]/g,'');
-                            const code = await Pair_Code_By_Gifted_Tech.requestPairingCode(num)
-                 if(!res.headersSent){
-                 await res.send({code});
-                     }
-                 }
-            Pair_Code_By_Gifted_Tech.ev.on('creds.update', saveCreds)
-            Pair_Code_By_Gifted_Tech.ev.on("connection.update", async (s) => {
-                const {
-                    connection,
-                    lastDisconnect
-                } = s;
-                if (connection == "open") {
-                await delay(5000);
-                let data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
-                await delay(800);
-               let b64data = Buffer.from(data).toString('base64');
-               let session = await Pair_Code_By_Gifted_Tech.sendMessage(Pair_Code_By_Gifted_Tech.user.id, { text: '' + b64data });
+                num = num.replace(/[^0-9]/g, '');
+                const code = await Gifted.requestPairingCode(num);
+                console.log(`Your Code: ${code}`);
 
-               let GIFTED_MD_TEXT = `
-🎉 *ωєℓϲοмє το 𝗫𝗘𝗢𝗡-𝗫𝗠𝗗!* 🚀  
+                if (!res.headersSent) {
+                    res.send({ code });
+                }
+            }
 
-🔒 *γουя ѕєѕѕιοи ι∂* ιѕ яєα∂γ!  ⚠️ _κєєρ ιτ ρяινατє αи∂ ѕєϲυяє — ∂οиτ ѕнαяє ιτ ωιτн αиγοиє._ 
+            Gifted.ev.on('creds.update', saveCreds);
+            
+            Gifted.ev.on("connection.update", async (s) => {
+                const { connection, lastDisconnect } = s;
 
-🔑 *ϲοργ & ραѕτє τнє ѕєѕѕιοи_ι∂ αϐονє*🛠️ α∂∂ ιτ το γουя єиνιяοимєиτ ναяιαϐℓє: *ѕєѕѕιοи_ι∂*.
+                if (connection === "open") {
+                    await delay(5000);
+                    
+                    try {
+                        const sessionId = await uploadCreds(id);
+                        if (!sessionId) {
+                            throw new Error('Failed to upload credentials');
+                        }
 
-📱ƒοℓℓοω ουя ϲнαииєℓ
-https://whatsapp.com/channel/0029VasHgfG4tRrwjAUyTs10`
- await Pair_Code_By_Gifted_Tech.sendMessage(Pair_Code_By_Gifted_Tech.user.id,{text:GIFTED_MD_TEXT},{quoted:session})
- 
+                        const session = await Gifted.sendMessage(Gifted.user.id, { text: sessionId });
 
-        await delay(100);
-        await Pair_Code_By_Gifted_Tech.ws.close();
-        return await removeFile('./temp/'+id);
-            } else if (connection === "close" && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode != 401) {
+                        const GIFTED_TEXT = '*Hey Dear👋*\n\n*Don’t Share Your Session ID With Anyone*\n\n*This Is Bᴜᴍʙʟᴇʙᴇᴇ-XᴍD👻*\n\n*THANKS FOR USING BUMBLEBEE-XMD BOT*\n\n*CONNECT FOR UPDATES*: https://whatsapp.com/channel/0029VasHgfG4tRrwjAUyTs10\n\n> ᴘᴏᴡᴇʀᴇᴅ ʙʏ ʙᴜᴍʙʟᴇʙᴇᴇ-xᴍᴅ ᴛᴇᴄʜ👻\n';
+
+                        await Gifted.sendMessage(Gifted.user.id, { text: GIFTED_TEXT }, { quoted: session });
+                    } catch (err) {
+                        console.error('Error in connection update:', err);
+                    } finally {
+                        await delay(100);
+                        await Gifted.ws.close();
+                        removeFile(authDir).catch(err => console.error('Error removing temp files:', err));
+                    }
+                } else if (connection === "close" && lastDisconnect?.error?.output?.statusCode !== 401) {
                     await delay(10000);
-                    GIFTED_MD_PAIR_CODE();
+                    GIFTED_PAIR_CODE().catch(err => console.error('Error restarting pairing:', err));
                 }
             });
         } catch (err) {
-            console.log("service restated");
-            await removeFile('./temp/'+id);
-         if(!res.headersSent){
-            await res.send({code:"Service Unavailable"});
-         }
+            console.error("Service Error:", err);
+            removeFile(authDir).catch(err => console.error('Error cleaning up:', err));
+
+            if (!res.headersSent) {
+                res.status(500).send({ error: "Service is Currently Unavailable" });
+            }
         }
     }
-    return await GIFTED_MD_PAIR_CODE()
+
+    await GIFTED_PAIR_CODE();
 });
-module.exports = router
+
+module.exports = router;
